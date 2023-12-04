@@ -1,50 +1,67 @@
-import React from 'react';
-import './Dashboard.css';
-import { Location } from '../types';
+import React from "react";
+import "./Dashboard.css";
+import { Location } from "../types";
+import { Button, Page, Table } from "@wix/design-system";
+import {createClient } from '@wix/sdk'
+import { dashboard } from '@wix/dashboard'
 
-const locations: Location[]  = [
-    {
-        name: "Tel Aviv",
-        coord: {
-            latitude: 32.0852997,
-            longitude: 34.7818064
-        }
-    },
-    {
-        name: "Be'er Sheva",
-        coord: {
-            latitude: 31.2457442,
-            longitude: 34.7925181
-        }
+const wixClient = createClient({
+    host: dashboard.host(),
+    auth: dashboard.auth(),
+    modules: {
+        dashboard
     }
-]
+})
+
+const locations: Location[] = [
+  {
+    name: "Tel Aviv",
+    coord: {
+      latitude: 32.0852997,
+      longitude: 34.7818064,
+    },
+  },
+  {
+    name: "Be'er Sheva",
+    coord: {
+      latitude: 31.2457442,
+      longitude: 34.7925181,
+    },
+  },
+];
 
 function Dashboard() {
-
-    return (
-        <div className="locations-container">
-            <div className="locations-header-container">
-                <h1>Our Locations</h1>
-                <button className="update-locatios-button">Update Locations</button>
-            </div>
-            <table className="locations-table">
-                <thead>
-                    <tr>
-                        <th className="locations-table-header">Name</th>
-                        <th className="locations-table-header">Coords</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {locations.map(location => {
-                        return <tr key={location.name}>
-                            <td className="locations-item-name">{location.name}</td>
-                            <td className="locations-item-name">{location.coord.latitude.toFixed(2)},{location.coord.longitude.toFixed(2)}</td>
-                        </tr>
-                    })}
-                </tbody>
-            </table>
-        </div>
-    );
+  return (
+    <Page>
+      <Page.Header
+        title="Our Locations"
+        actionsBar={<Button onClick={() => {
+            wixClient.dashboard.navigate('71e35f24-8eb7-41b0-b261-c2259a76372f')
+        }}>Update Locations</Button>}
+      />
+      <Page.Content>
+        <Table
+        rowVerticalPadding="medium"
+          data={locations}
+          columns={[
+            {
+              title: "Name",
+              render: (location) => location.name,
+            },
+            {
+              title: "Coords",
+              render: (location) =>
+                `${location.coord.latitude.toFixed(
+                  2
+                )},${location.coord.longitude.toFixed(2)}`,
+            },
+          ]}
+        >
+            <Table.Content />
+        </Table>
+      </Page.Content>
+    </Page>
+  );
 }
 
 export default Dashboard;
